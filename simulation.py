@@ -1,11 +1,9 @@
-#TODO: CONVERT CODE TO PYGLET
-
 import pygame
 import math
 
 pygame.init()
 
-WIDTH, HEIGHT = 900, 800
+WIDTH, HEIGHT = 1000, 900
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Planet Simulation Project")
 
@@ -15,23 +13,25 @@ BLUE = (100, 149, 237)
 RED = (188, 39, 50)
 DARK_GRAY = (80, 78, 81)
 DARK_RED = (107, 42, 32)
+BROWN_YELLOW = (105, 103, 83)
 PAUSE_COLOR = (77, 75, 94)
+
+BACKGROUND = pygame.image.load("C:\\College Projects\\Planet Simulator Project\\static\\bg.jpg")
 
 FONT = pygame.font.SysFont("comicsans", 16)
 
 class Planet:
 	AU = 149.6e6 * 1000
 	G = 6.67428e-11
-	SCALE = 125 / AU
+	SCALE = 250 / AU
 	TIMESTEP = 3600 * 24
 
-	def __init__(self, name, x, y, radius, color, hovered_color, mass):
+	def __init__(self, name, x, y, radius, color, mass):
 		self.name = name
 		self.x = x
 		self.y = y
 		self.radius = radius
 		self.color = color
-		self.hovered_color = hovered_color
 		self.current_color = color
 		self.mass = mass
 
@@ -49,7 +49,7 @@ class Planet:
 		x = self.x * self.SCALE + WIDTH / 2
 		y = self.y * self.SCALE + HEIGHT / 2
 
-		if len(self.orbit) >= 3 and self.orbit[-1] != self.orbit[0]:
+		if len(self.orbit) >= 3:
 			updated_point = []
 			for point in self.orbit:
 				x, y = point
@@ -118,7 +118,7 @@ class Text:
 
 	def create_key(self):
 		key_text = FONT.render("KEY:", 1, WHITE)
-		WIN.blit(key_text, (20, 700))
+		WIN.blit(key_text, (20, HEIGHT - 100))
 
 		positions_of_text = []
 
@@ -126,17 +126,17 @@ class Text:
 		val = 1
 
 		for planet in self.planets:
-			pygame.draw.circle(WIN, planet.color, (30 + increment * val, 740), 10)
+			pygame.draw.circle(WIN, planet.color, (30 + increment * val, HEIGHT - 60), 10)
 			planet_text = FONT.render(f"{planet.name}", 1, WHITE)
-			self.win.blit(planet_text, (45 + increment * val, 730))
-			positions_of_text.append((45 + increment * val, 730))
+			self.win.blit(planet_text, (45 + increment * val, HEIGHT - 70))
+			positions_of_text.append((45 + increment * val, HEIGHT - 70))
 			val += 10
 
 		return positions_of_text
 
 	def create_distance_text(self):
 		distance_sun = self.DISTANCE_FONT.render("DISTANCE FROM SUN:", 1, WHITE)
-		self.win.blit(distance_sun, (20, 760))
+		self.win.blit(distance_sun, (20, HEIGHT - 40))
 
 		for i in range(len(self.planets)):
 			planet = self.planets[i]
@@ -177,19 +177,19 @@ def main():
 	run = True
 	clock = pygame.time.Clock()
 	
-	sun = Planet("Sun", 0, 0, 30, YELLOW, (255, 255, 125), 1.99892 * 10**30)
+	sun = Planet("Sun", 0, 0, 30, YELLOW, 1.99892 * 10**30)
 	sun.sun = True
 
-	mercury = Planet("Mercury", 0.387 * Planet.AU, 0, 8, DARK_GRAY, (129, 126, 130), 3.30 * 10 ** 23)
+	mercury = Planet("Mercury", 0.387 * Planet.AU, 0, 8, DARK_GRAY, 3.30 * 10 ** 23)
 	mercury.y_vel = -47.4 * 1000
 
-	venus = Planet("Venus", 0.723 * Planet.AU, 0, 14, WHITE, (201, 201, 201), 4.8685 * 10 ** 24)
+	venus = Planet("Venus", 0.723 * Planet.AU, 0, 14, WHITE, 4.8685 * 10 ** 24)
 	venus.y_vel = -35.02 * 1000
 
-	earth = Planet("Earth", -1 * Planet.AU, 0, 16, BLUE, (123, 154, 209), 5.9742 * 10**24)
+	earth = Planet("Earth", -1 * Planet.AU, 0, 16, BLUE, 5.9742 * 10**24)
 	earth.y_vel = 29.783 * 1000
 
-	mars = Planet("Mars", -1.524 * Planet.AU, 0, 12, RED, (186, 65, 74), 6.39 * 10**23)
+	mars = Planet("Mars", -1.524 * Planet.AU, 0, 12, RED, 6.39 * 10**23)
 	mars.y_vel = 24.077 * 1000
 
 	planets = [sun, mercury, venus, earth, mars]
@@ -197,7 +197,7 @@ def main():
 
 	while run:
 		clock.tick(60)
-		WIN.fill((0, 0, 0))
+		WIN.blit(BACKGROUND, (0, 0))
 
 		button = pygame.draw.rect(WIN, PAUSE_COLOR, [10, 10, 100, 50])
 		button_font = pygame.font.SysFont("arial", 20, bold=True)
